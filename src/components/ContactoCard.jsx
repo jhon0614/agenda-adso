@@ -3,29 +3,51 @@ export default function ContactoCard({
   telefono,
   correo,
   etiqueta,
+  empresa,
   onEliminar,
 }) {
   return (
-    <article className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-      <h3 className="text-lg font-semibold text-gray-900">{nombre}</h3>
+    <div className="bg-white shadow-sm border border-gray-200 rounded-2xl p-6 flex items-start justify-between">
+      {/* Información */}
+      <div className="space-y-1">
+        {/* Nombre */}
+        <h3 className="text-xl font-semibold text-gray-800">{nombre}</h3>
 
-      <div className="mt-2 space-y-1 text-sm text-gray-700">
-        <p>📞 {telefono}</p>
-        <p>✉️ {correo}</p>
+        {/* Teléfono */}
+        <p className="text-gray-600 text-sm flex items-center gap-2">
+          <span className="text-purple-500 text-lg">📞</span>
+          {telefono}
+        </p>
 
+        {/* Correo */}
+        <p className="text-gray-600 text-sm flex items-center gap-2">
+          <span className="text-purple-500 text-lg">✉️</span>
+          {correo}
+        </p>
+
+        {/* Empresa */}
+        {empresa && (
+          <p className="text-gray-600 text-sm flex items-center gap-2">
+            <span className="text-purple-500 text-lg">🏬</span>
+            {empresa}
+          </p>
+        )}
+
+        {/* Etiqueta */}
         {etiqueta && (
-          <span className="inline-block text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">
+          <span className="inline-block bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full mt-2">
             {etiqueta}
           </span>
         )}
       </div>
 
+      {/* Botón eliminar */}
       <button
-        onClick={() => onEliminar(correo)}
-        className="mt-3 bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1.5 rounded-lg transition"
+        onClick={onEliminar}
+        className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg shadow transition"
       >
         Eliminar
       </button>
-    </article>
+    </div>
   );
 }
