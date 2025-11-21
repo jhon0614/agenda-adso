@@ -1,11 +1,12 @@
 {
   "contactos": [
     {
-      "id": "1d3f",
-      "nombre": "Gustavo Adolfo Bolaños dorado",
-      "telefono": "3217532037",
-      "correo": "gabodorado@gmail.com",
-      "etiqueta": "profe"
+      "id": "0c88",
+      "nombre": "jhon",
+      "telefono": "1234567890",
+      "correo": "jhon@gmail.com",
+      "etiqueta": "",
+      "empresa": ""
     }
   ]
 }
