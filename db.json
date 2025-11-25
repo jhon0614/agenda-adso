@@ -1,3 +1,28 @@
 {
-  "contactos": []
+  "contactos": [
+    {
+      "id": "149c",
+      "nombre": "jhon",
+      "telefono": "1234567890",
+      "correo": "jhon@gmail.com",
+      "etiqueta": "",
+      "empresa": ""
+    },
+    {
+      "id": "77a9",
+      "nombre": "eduar",
+      "telefono": "1234564560",
+      "correo": "eduar@gmail.com",
+      "etiqueta": "",
+      "empresa": ""
+    },
+    {
+      "id": "c2e2",
+      "nombre": "lezcano",
+      "telefono": "3005218219",
+      "correo": "lezcano@gmail.com",
+      "etiqueta": "",
+      "empresa": "bancolombia"
+    }
+  ]
 }
