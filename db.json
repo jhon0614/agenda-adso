@@ -1,12 +1,3 @@
 {
-  "contactos": [
-    {
-      "id": "0c88",
-      "nombre": "jhon",
-      "telefono": "1234567890",
-      "correo": "jhon@gmail.com",
-      "etiqueta": "",
-      "empresa": ""
-    }
-  ]
+  "contactos": []
 }
