@@ -1,28 +1,18 @@
 {
   "contactos": [
     {
-      "id": "149c",
-      "nombre": "jhon",
-      "telefono": "1234567890",
+      "nombre": "jhon ricardo",
+      "telefono": "3008612131",
       "correo": "jhon@gmail.com",
       "etiqueta": "",
-      "empresa": ""
+      "id": "9b69"
     },
     {
-      "id": "77a9",
-      "nombre": "eduar",
-      "telefono": "1234564560",
-      "correo": "eduar@gmail.com",
+      "nombre": "eduar rios cuervo",
+      "telefono": "1234567890",
+      "correo": "eduar@hotmail.com",
       "etiqueta": "",
-      "empresa": ""
-    },
-    {
-      "id": "c2e2",
-      "nombre": "lezcano",
-      "telefono": "3005218219",
-      "correo": "lezcano@gmail.com",
-      "etiqueta": "",
-      "empresa": "bancolombia"
+      "id": "7e13"
     }
   ]
 }

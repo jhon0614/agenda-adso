@@ -1,6 +1,16 @@
-import { useState } from "react";
+// Archivo: src/components/FormularioContacto.jsx
+// Componente de formulario reutilizable para crear y editar contactos.
+// - En modo "crear": usa onAgregar(form).
+// - En modo "editar": usa onActualizar({ ...form, id }) y muestra botón "Cancelar edición"
 
-function FormularioContacto({ onAgregar }) {
+import { useState, useEffect } from "react";
+
+function FormularioContacto({
+  onAgregar,
+  onActualizar,
+  contactoEnEdicion,
+  onCancelarEdicion,
+}) {
   // Estado del formulario
   const [form, setForm] = useState({
     nombre: "",
@@ -18,6 +28,38 @@ function FormularioContacto({ onAgregar }) {
   });
 
   const [enviando, setEnviando] = useState(false);
+
+  // useEffect para cargar los datos del contacto en edición (si existe)
+  useEffect(() => {
+    if (contactoEnEdicion) {
+      // Si hay contacto en edición, llenamos el formulario con sus datos
+      setForm({
+        nombre: contactoEnEdicion.nombre || "",
+        telefono: contactoEnEdicion.telefono || "",
+        correo: contactoEnEdicion.correo || "",
+        etiqueta: contactoEnEdicion.etiqueta || "",
+      });
+      // Limpiamos errores al entrar en modo edición
+      setErrores({
+        nombre: "",
+        telefono: "",
+        correo: "",
+      });
+    } else {
+      // Si no hay contacto en edición, dejamos el formulario en blanco (modo crear)
+      setForm({
+        nombre: "",
+        telefono: "",
+        correo: "",
+        etiqueta: "",
+      });
+      setErrores({
+        nombre: "",
+        telefono: "",
+        correo: "",
+      });
+    }
+  }, [contactoEnEdicion]);
 
   // Manejar cambios en inputs
   const onChange = (e) => {
@@ -67,26 +109,55 @@ function FormularioContacto({ onAgregar }) {
 
     try {
       setEnviando(true);
-      await onAgregar(form);
+      if (contactoEnEdicion) {
+        // MODO EDICIÓN: llamamos a onActualizar con el id del contacto
+        await onActualizar({
+          ...form,
+          id: contactoEnEdicion.id,
+        });
 
-      // Limpiar formulario
-      setForm({
-        nombre: "",
-        telefono: "",
-        correo: "",
-        etiqueta: "",
-        empresa: "",
-      });
+        // Limpiar formulario
+        setForm({
+          nombre: "",
+          telefono: "",
+          correo: "",
+          etiqueta: "",
+          empresa: "",
+        });
 
-      setErrores({
-        nombre: "",
-        telefono: "",
-        correo: "",
-      });
+        setErrores({
+          nombre: "",
+          telefono: "",
+          correo: "",
+        });
+        if (onCancelarEdicion) onCancelarEdicion();
+      } else {
+        // MODO CREAR: llamamos a onAgregar como en clases anteriores
+        await onAgregar(form);
+        // Limpiamos el formulario para un nuevo registro
+        setForm({
+          nombre: "",
+          telefono: "",
+          correo: "",
+          etiqueta: "",
+        });
+        setErrores({
+          nombre: "",
+          telefono: "",
+          correo: "",
+        });
+      }
     } finally {
       setEnviando(false);
     }
   };
+  // Texto dinámico del título y del botón según el modo
+  const estaEnEdicion = Boolean(contactoEnEdicion);
+  const tituloFormulario = estaEnEdicion ? "Editar contacto" : "Nuevo contacto";
+
+  const textoBotonPrincipal = estaEnEdicion
+    ? "Guardar cambios"
+    : "Agregar contacto";
 
   return (
     <form
@@ -94,7 +165,7 @@ function FormularioContacto({ onAgregar }) {
       onSubmit={onSubmit}
     >
       <h2 className="text-lg font-semibold text-gray-900 mb-2">
-        Nuevo contacto
+        {tituloFormulario}
       </h2>
 
       {/* Nombre */}
@@ -178,7 +249,7 @@ function FormularioContacto({ onAgregar }) {
       </div>
 
       {/* Botón */}
-      <div className="pt-2">
+      <div className="pt-2 flex flex-col md:flex-row gap-2">
         <button
           type="submit"
           disabled={enviando}
@@ -186,8 +257,19 @@ function FormularioContacto({ onAgregar }) {
                      disabled:cursor-not-allowed text-white px-6 py-3 
                      rounded-xl font-semibold shadow-sm"
         >
-          {enviando ? "Guardando..." : "Agregar contacto"}
+          {enviando ? "Guardando..." : textoBotonPrincipal}
         </button>
+        {/* Botón secundario: cancelar edición (solo en modo edición) */}
+        {estaEnEdicion && (
+          <button
+            type="button"
+            onClick={onCancelarEdicion}
+            className="w-full md:w-auto bg-gray-100 text-gray-700 px-6 py-3 rounded-xl
+border border-gray-300 hover:bg-gray-200 text-sm"
+          >
+            Cancelar edición
+          </button>
+        )}
       </div>
     </form>
   );

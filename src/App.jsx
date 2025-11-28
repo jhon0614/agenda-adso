@@ -1,7 +1,7 @@
 // Importamos hooks de React
 import { useEffect, useState } from "react";
 // Importamos las funciones de la API (capa de datos)
-import { listarContactos, crearContacto, eliminarContactoPorId } from "./api";
+import { listarContactos, crearContacto, eliminarContactoPorId, actualizarContacto } from "./api";
 // Importamos la configuración global de la aplicación
 import { APP_INFO } from "./config";
 
@@ -16,6 +16,7 @@ function App() {
   const [exito, setExito] = useState("");
   const [busqueda, setBusqueda] = useState(""); // Estado para búsqueda
   const [ordenAsc, setOrdenAsc] = useState(true); // true = A-Z, false = Z-A
+  const [contactoEnEdicion, setContactoEnEdicion] = useState(null);
 
   // Cargar contactos al iniciar
   useEffect(() => {
@@ -60,12 +61,47 @@ function App() {
       setError("");
       await eliminarContactoPorId(id);
       setContactos((prev) => prev.filter((c) => c.id !== id));
+
+      setContactoEnEdicion((actual)=>{
+        actual && actual.id === id ? null : actual
+      })
+      setExito("Contacto eliminado correctamente");
+      setTimeout(() => setExito(""), 3500);
     } catch (error) {
       console.error("Error al eliminar contacto:", error);
       setError(
         "No se pudo eliminar el contacto. Vuelve a intentarlo o verifica el servidor."
       );
     }
+  };
+
+  // Editar contacto
+  const onActualizarContacto = async (contactoActualizado) => {
+    try {
+      setError("");
+
+      const actualizado = await actualizarContacto(contactoActualizado.id, contactoActualizado);
+      setContactos((prev) => prev.map((c) => c.id === actualizado.id ? actualizado : c));
+      setContactoEnEdicion(null);
+      setExito("Contacto editado con exito");
+      setTimeout(() => setExito(""), 3500);
+    } catch (error) {
+      console.error("Error al actualizar el contacto:", error);
+      setError(
+        "No se pudo actualizar el contacto. Vuelve a intentarlo o verifica el servidor."
+      );
+      throw error;
+    }
+  };
+
+  // Función para activar el modo edición al hacer clic en "Editar"
+  const onEditarClick = (contacto) => {
+    setContactoEnEdicion(contacto); // Guardamos el contacto que se va a editar
+    setError("");
+  };
+  // Función para cancelar la edición y volver a modo &quot;crear&quot;
+  const onCancelarEdicion = () => {
+    setContactoEnEdicion(null);
   };
 
   // Filtrar contactos según búsqueda
@@ -116,7 +152,12 @@ function App() {
         ) : (
           <>
             {/* FORMULARIO */}
-            <FormularioContacto onAgregar={onAgregarContacto} />
+            <FormularioContacto 
+            onAgregar={onAgregarContacto} 
+            onActualizar={onActualizarContacto} 
+            contactoEnEdicion={contactoEnEdicion}
+            onCancelarEdicion={onCancelarEdicion}
+            />
 
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
               <input
@@ -151,6 +192,7 @@ function App() {
                     empresa={c.empresa}
                     etiqueta={c.etiqueta}
                     onEliminar={() => onEliminarContacto(c.id)}
+                    onEditar={() => onEditarClick(c)}
                   />
                 ))
               )}

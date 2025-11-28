@@ -1,3 +1,6 @@
+// Componente que muestra la información de un contacto en una tarjeta.
+// Incluye botones para Editar y Eliminar.
+
 export default function ContactoCard({
   nombre,
   telefono,
@@ -5,6 +8,7 @@ export default function ContactoCard({
   etiqueta,
   empresa,
   onEliminar,
+  onEditar,
 }) {
   return (
     <div className="bg-white shadow-sm border border-gray-200 rounded-2xl p-6 flex items-start justify-between">
@@ -41,13 +45,24 @@ export default function ContactoCard({
         )}
       </div>
 
-      {/* Botón eliminar */}
-      <button
-        onClick={onEliminar}
-        className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg shadow transition"
-      >
-        Eliminar
-      </button>
+      {/* Boton de acciones */}
+      <div className="flex justify-end gap-2">
+        {/* Botón eliminar */}
+        <button
+          onClick={onEliminar}
+          className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg shadow transition"
+        >
+          Eliminar
+        </button>
+
+        {/* Botón editar */}
+        <button
+          onClick={onEditar}
+          className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg shadow transition"
+        >
+          Editar
+        </button>
+      </div>
     </div>
   );
 }
