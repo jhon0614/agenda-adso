@@ -1,7 +1,12 @@
 // Importamos hooks de React
 import { useEffect, useState } from "react";
 // Importamos las funciones de la API (capa de datos)
-import { listarContactos, crearContacto, eliminarContactoPorId, actualizarContacto } from "./api";
+import {
+  listarContactos,
+  crearContacto,
+  eliminarContactoPorId,
+  actualizarContacto,
+} from "./api";
 // Importamos la configuración global de la aplicación
 import { APP_INFO } from "./config";
 
@@ -17,6 +22,13 @@ function App() {
   const [busqueda, setBusqueda] = useState(""); // Estado para búsqueda
   const [ordenAsc, setOrdenAsc] = useState(true); // true = A-Z, false = Z-A
   const [contactoEnEdicion, setContactoEnEdicion] = useState(null);
+  const [pagina, setPagina] = useState(1);
+  const contactoPorPagina = 3;
+
+  //paginar contactos
+  useEffect(() => {
+    setPagina(1);
+  }, [busqueda]);
 
   // Cargar contactos al iniciar
   useEffect(() => {
@@ -62,9 +74,9 @@ function App() {
       await eliminarContactoPorId(id);
       setContactos((prev) => prev.filter((c) => c.id !== id));
 
-      setContactoEnEdicion((actual)=>{
-        actual && actual.id === id ? null : actual
-      })
+      setContactoEnEdicion((actual) => {
+        actual && actual.id === id ? null : actual;
+      });
       setExito("Contacto eliminado correctamente");
       setTimeout(() => setExito(""), 3500);
     } catch (error) {
@@ -80,8 +92,13 @@ function App() {
     try {
       setError("");
 
-      const actualizado = await actualizarContacto(contactoActualizado.id, contactoActualizado);
-      setContactos((prev) => prev.map((c) => c.id === actualizado.id ? actualizado : c));
+      const actualizado = await actualizarContacto(
+        contactoActualizado.id,
+        contactoActualizado
+      );
+      setContactos((prev) =>
+        prev.map((c) => (c.id === actualizado.id ? actualizado : c))
+      );
       setContactoEnEdicion(null);
       setExito("Contacto editado con exito");
       setTimeout(() => setExito(""), 3500);
@@ -110,7 +127,11 @@ function App() {
     const nombre = c.nombre.toLowerCase();
     const correo = c.correo.toLowerCase();
     const etiqueta = (c.etiqueta || "").toLowerCase();
-    return nombre.includes(termino) || correo.includes(termino) || etiqueta.includes(termino);
+    return (
+      nombre.includes(termino) ||
+      correo.includes(termino) ||
+      etiqueta.includes(termino)
+    );
   });
 
   // Ordenar contactos filtrados por nombre
@@ -122,6 +143,12 @@ function App() {
     return 0;
   });
 
+  const totalPaginas = Math.ceil(contactosOrdenados.length / contactoPorPagina);
+  const inicio = (pagina - 1) * contactoPorPagina;
+  const fin = inicio + contactoPorPagina;
+  const contactosPaginados = contactosOrdenados.slice(inicio, fin);
+  const paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
@@ -130,7 +157,9 @@ function App() {
           <p className="text-xs tracking-[0.3em] text-gray-500 uppercase">
             Desarrollo Web ReactJS Ficha {APP_INFO.ficha}
           </p>
-          <h1 className="text-4xl font-extrabold text-gray-900 mt-2">{APP_INFO.titulo}</h1>
+          <h1 className="text-4xl font-extrabold text-gray-900 mt-2">
+            {APP_INFO.titulo}
+          </h1>
           <p className="text-sm text-gray-600 mt-1">{APP_INFO.subtitulo}</p>
         </header>
 
@@ -152,11 +181,11 @@ function App() {
         ) : (
           <>
             {/* FORMULARIO */}
-            <FormularioContacto 
-            onAgregar={onAgregarContacto} 
-            onActualizar={onActualizarContacto} 
-            contactoEnEdicion={contactoEnEdicion}
-            onCancelarEdicion={onCancelarEdicion}
+            <FormularioContacto
+              onAgregar={onAgregarContacto}
+              onActualizar={onActualizarContacto}
+              contactoEnEdicion={contactoEnEdicion}
+              onCancelarEdicion={onCancelarEdicion}
             />
 
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
@@ -178,12 +207,12 @@ function App() {
 
             {/* LISTA DE CONTACTOS */}
             <section className="space-y-4">
-              {contactosOrdenados.length === 0 ? (
+              {contactosPaginados.length === 0 ? (
                 <p className="text-sm text-gray-500">
                   No se encontraron contactos que coincidan con la búsqueda.
                 </p>
               ) : (
-                contactosOrdenados.map((c) => (
+                contactosPaginados.map((c) => (
                   <ContactoCard
                     key={c.id}
                     nombre={c.nombre}
@@ -196,6 +225,86 @@ function App() {
                   />
                 ))
               )}
+
+              {contactosFiltrados.length > 0 && (
+                <p className="text-sm text-gray-500 text-center">
+                  Mostrando {inicio + 1}–
+                  {Math.min(fin, contactosFiltrados.length)} de{" "}
+                  {contactosFiltrados.length} resultados
+                </p>
+              )}
+
+              <nav className="flex items-center justify-center gap-3 mt-6">
+                {/* Botón anterior */}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (pagina > 1) setPagina(pagina - 1);
+                  }}
+                  className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 
+                  disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                  disabled={pagina === 1}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" />
+                    <path d="M15 6l-6 6l6 6" />
+                  </svg>
+                </button>
+
+                {/* Números */}
+                {paginas.map((num) => (
+                  <button
+                    key={num}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (pagina !== num) setPagina(num);
+                    }}
+                    className={`px-4 py-2 rounded-lg border text-sm font-medium transition
+                  ${
+                    pagina === num
+                      ? "bg-purple-600 text-white border-purple-600 cursor-default"
+                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+                  }
+                  `}
+                  >
+                    {num}
+                  </button>
+                ))}
+
+                {/* Botón siguiente */}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (pagina < paginas.length) setPagina(pagina + 1);
+                  }}
+                  className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 
+                  disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                  disabled={pagina === paginas.length}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" />
+                    <path d="M9 6l6 6l-6 6" />
+                  </svg>
+                </button>
+              </nav>
             </section>
           </>
         )}
