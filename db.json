@@ -8,11 +8,11 @@
       "id": "24b6"
     },
     {
-      "id": "0009",
-      "nombre": "eduar",
+      "nombre": "Eduar",
       "telefono": "1234567890",
       "correo": "eduar@hotmail.com",
-      "etiqueta": ""
+      "etiqueta": "Hermano",
+      "id": "0009"
     },
     {
       "id": "d4fd",
@@ -29,19 +29,27 @@
       "etiqueta": ""
     },
     {
-      "nombre": "camilo",
+      "nombre": "Camilo",
       "telefono": "3008612131",
       "correo": "camilo@gmail.com",
-      "etiqueta": "",
-      "empresa": "emtelco",
+      "etiqueta": "Hermano",
+      "empresa": "Bancolombia",
       "id": "be12"
     },
     {
-      "id": "2abe",
-      "nombre": "erika",
+      "nombre": "Erika",
       "telefono": "3008612131",
       "correo": "erika@gmail.com",
-      "etiqueta": ""
+      "etiqueta": "",
+      "id": "2abe"
+    },
+    {
+      "id": "d965",
+      "nombre": "Samir",
+      "telefono": "1234567890",
+      "correo": "samir@sena.edu",
+      "etiqueta": "Estudiante",
+      "empresa": "Telefonica"
     }
   ]
 }
